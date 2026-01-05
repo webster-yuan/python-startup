@@ -3,7 +3,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 import uvicorn
-from routers import path_param_router, query_param_router, req_body_router
+from routers import path_param_router, query_param_router, req_body_router, other_data_type_router, \
+    header_cookie_router, header_router
 import logging
 
 logger = logging.getLogger(__name__)
@@ -32,6 +33,9 @@ def read_root():
 app.include_router(path_param_router)
 app.include_router(query_param_router)
 app.include_router(req_body_router)
+app.include_router(other_data_type_router)
+app.include_router(header_cookie_router)
+app.include_router(header_router)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
