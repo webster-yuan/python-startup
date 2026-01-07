@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any, Union
 
 from fastapi import APIRouter, Response, status
@@ -163,7 +164,7 @@ async def read_item(item_id: str):
     return items_base[item_id]
 
 
-# 响应状态码
+# 路径操作函数之响应状态码
 @response_router.post("/items/", status_code=201)
 async def create_item(name: str):
     return {"name": name}
@@ -171,4 +172,32 @@ async def create_item(name: str):
 
 @response_router.put("/items/", status_code=status.HTTP_201_CREATED)
 async def update_item(name: str):
+    return {"name": name}
+
+
+class Tags(Enum):
+    items = "items"
+    users = "users"
+
+
+# 路径操作函数之标签
+@response_router.post("/tags/items/",
+                      status_code=status.HTTP_201_CREATED,
+                      tags=["items", Tags.users],
+                      summary="Create an item",
+                      description="Create an item with all the information",
+                      response_model=ResponseItem,
+                      response_description="The created item",
+                      deprecated=False,  # 是否弃用这个路径操作
+                      )
+async def tags_create_item(name: str):
+    """
+        Create an item with all the information:
+
+        - **name**: each item must have a name
+        - **description**: a long description
+        - **price**: required
+        - **tax**: if the item doesn't have tax, you can omit this
+        - **tags**: a set of unique tag strings for this item
+    """
     return {"name": name}
