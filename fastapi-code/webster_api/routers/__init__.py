@@ -4,3 +4,4 @@ from .req_body import req_body_router
 from .other_data_type import other_data_type_router
 from .header import header_router
 from .header_cookie import header_cookie_router
+from exception_demo import exception_router

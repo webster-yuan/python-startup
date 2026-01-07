@@ -2,10 +2,12 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+import logging
 import uvicorn
 from routers import path_param_router, query_param_router, req_body_router, other_data_type_router, \
-    header_cookie_router, header_router
-import logging
+    header_cookie_router, header_router, exception_router
+
+from exception import UnicornException, unicorn_exception_handler
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +25,8 @@ async def lifespan(web: FastAPI):
 
 app = FastAPI(lifespan=lifespan)  # app是FastAPI类的实例，创建API的主要交互点
 
+app.add_exception_handler(UnicornException, unicorn_exception_handler)
+
 
 # openapi中每个HTTP方法都被称为操作
 @app.get("/")  # 路径操作装饰器：告诉FastAPI，下面的函数负责处理发送到=> 路径：/ 使用 get 操作
@@ -36,6 +40,7 @@ app.include_router(req_body_router)
 app.include_router(other_data_type_router)
 app.include_router(header_cookie_router)
 app.include_router(header_router)
+app.include_router(exception_router)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
