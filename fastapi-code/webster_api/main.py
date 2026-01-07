@@ -1,5 +1,7 @@
 # webster_api/main.py
+import time
 from contextlib import asynccontextmanager
+from urllib.request import Request
 
 from fastapi import FastAPI
 import logging
@@ -32,6 +34,15 @@ app.add_exception_handler(UnicornException, unicorn_exception_handler)
 @app.get("/")  # 路径操作装饰器：告诉FastAPI，下面的函数负责处理发送到=> 路径：/ 使用 get 操作
 def read_root():
     return "hello webster"
+
+
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time.perf_counter()
+    response = await call_next(request)
+    process_time = time.perf_counter() - start_time
+    response.headers["X-Process-Time"] = str(process_time)
+    return response
 
 
 app.include_router(path_param_router)
