@@ -5,7 +5,7 @@ from fastapi import FastAPI
 import logging
 import uvicorn
 from routers import path_param_router, query_param_router, req_body_router, other_data_type_router, \
-    header_cookie_router, header_router, exception_router
+    header_cookie_router, header_router, exception_router, depends_router
 
 from exception import UnicornException, unicorn_exception_handler
 
@@ -41,6 +41,7 @@ app.include_router(other_data_type_router)
 app.include_router(header_cookie_router)
 app.include_router(header_router)
 app.include_router(exception_router)
+app.include_router(depends_router)
 
 if __name__ == "__main__":
     uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
