@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 from fastapi import APIRouter
 
-from webster_api.exception import UnicornException
+from webster_api.exception import BusinessException
 
 exception_router = APIRouter(prefix="/exception", tags=["exception"])
 items = {"foo": "The Foo Wrestlers"}
@@ -22,4 +22,4 @@ async def exception_item_get(item_id: str):
 # 自定义异常
 @exception_router.get("/test")
 async def test_exception():
-    raise UnicornException("Rainbow Dash")
+    raise BusinessException("Rainbow Dash")

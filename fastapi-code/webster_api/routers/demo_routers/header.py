@@ -21,8 +21,8 @@ class CommonHeaders(BaseModel):
     x_tag: list[str] = []
 
 
-@header_router.get("/items/")
-async def read_items(
+@header_router.get("/common-headers/")
+async def read_common_headers(
         headers: Annotated[CommonHeaders, Header(convert_underscores=False)]
 ):
     """
