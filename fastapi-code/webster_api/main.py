@@ -6,6 +6,8 @@ from urllib.request import Request
 from fastapi import FastAPI
 import logging
 import uvicorn
+from fastapi.middleware.cors import CORSMiddleware
+
 from routers import path_param_router, query_param_router, req_body_router, other_data_type_router, \
     header_cookie_router, header_router, exception_router, depends_router
 
@@ -44,6 +46,15 @@ async def add_process_time_header(request: Request, call_next):
     response.headers["X-Process-Time"] = str(process_time)
     return response
 
+
+origins = ["http://localhost:3000"]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # 允许访问的来源列表
+    allow_credentials=True,  # 是否允许携带 Cookie
+    allow_methods=["*"],  # 允许的 HTTP 方法
+    allow_headers=["*"],  # 允许的请求头
+)
 
 app.include_router(path_param_router)
 app.include_router(query_param_router)
