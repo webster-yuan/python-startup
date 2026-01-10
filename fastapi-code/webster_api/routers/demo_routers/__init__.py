@@ -6,3 +6,4 @@ from .header_cookie import header_cookie_router
 from .header import header_router
 from .exception_demo import exception_router
 from .depends import depends_router
+from .background_task import bg_task_router

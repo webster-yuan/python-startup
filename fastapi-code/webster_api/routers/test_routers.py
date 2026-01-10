@@ -8,6 +8,7 @@ from .demo_routers.header_cookie import header_cookie_router
 from .demo_routers.header import header_router
 from .demo_routers.exception_demo import exception_router
 from .demo_routers.depends import depends_router
+from .demo_routers import bg_task_router
 
 test_router = APIRouter()
 
@@ -19,3 +20,4 @@ test_router.include_router(header_cookie_router)
 test_router.include_router(header_router)
 test_router.include_router(exception_router)
 test_router.include_router(depends_router)
+test_router.include_router(bg_task_router)
