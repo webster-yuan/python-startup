@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
 from exception import BusinessException, InfraException, SystemException
+from webster_api.config import settings
 from webster_api.db.sqlite import create_db_and_tables
 from webster_api.routers import test_router, api_router
 
@@ -31,7 +32,11 @@ async def lifespan(web: FastAPI):
     logger.info(f"Webster-Api shut down !")
 
 
-app = FastAPI(lifespan=lifespan)  # app是FastAPI类的实例，创建API的主要交互点
+app = FastAPI(
+    title=settings.app_name,
+    debug=settings.debug,
+    lifespan=lifespan
+)  # app是FastAPI类的实例，创建API的主要交互点
 
 
 @app.exception_handler(BusinessException)
@@ -59,17 +64,21 @@ async def add_process_time_header(request: Request, call_next):
     return response
 
 
-origins = ["http://localhost:3000"]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  # 允许访问的来源列表
-    allow_credentials=True,  # 是否允许携带 Cookie
-    allow_methods=["*"],  # 允许的 HTTP 方法
-    allow_headers=["*"],  # 允许的请求头
+    allow_origins=settings.cors_origins_list,  # 允许访问的来源列表
+    allow_credentials=settings.cors_allow_credentials,  # 是否允许携带 Cookie
+    allow_methods=settings.cors_allow_methods_list,  # 允许的 HTTP 方法
+    allow_headers=settings.cors_allow_headers_list,  # 允许的请求头
 )
 
 app.include_router(test_router)
 app.include_router(api_router)
 
 if __name__ == "__main__":
-    uvicorn.run(app="main:app", host="127.0.0.1", port=8000, reload=True)
+    uvicorn.run(
+        app="main:app",
+        host=settings.api_host,
+        port=settings.api_port,
+        reload=settings.reload or settings.debug
+    )
