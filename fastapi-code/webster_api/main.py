@@ -9,10 +9,17 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import JSONResponse
 
-from exception import BusinessException, InfraException, SystemException
 from webster_api.config import settings
 from webster_api.db.sqlite import create_db_and_tables
 from webster_api.routers import test_router, api_router
+from webster_api.routers.auth import auth_router
+from webster_api.exception.base import BusinessException, SystemException, InfraException
+from webster_api.exception.handlers import (
+    business_exception_handler,
+    system_exception_handler,
+    infra_exception_handler,
+    general_exception_handler
+)
 
 logger = logging.getLogger(__name__)
 
@@ -38,15 +45,19 @@ app = FastAPI(
     lifespan=lifespan
 )  # app是FastAPI类的实例，创建API的主要交互点
 
+# 注册异常处理器
+# 注意：注册顺序很重要，先注册具体异常，后注册通用的异常
+# FastAPI 会按照异常类的继承关系匹配，更具体的异常会优先匹配
+#
+# 架构原则：
+# - 技术异常（ValueError、AttributeError 等）应该在 Service 层转换为业务异常
+# - 全局异常处理器只处理业务异常和未预期的系统异常
+# - 如果技术异常暴露给用户，说明代码有问题，应该修复代码而不是用全局处理器兜底
 
-@app.exception_handler(BusinessException)
-@app.exception_handler(SystemException)
-@app.exception_handler(InfraException)
-def error_handler(request, exc):
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"detail": exc.detail}
-    )
+app.add_exception_handler(BusinessException, business_exception_handler)
+app.add_exception_handler(SystemException, system_exception_handler)
+app.add_exception_handler(InfraException, infra_exception_handler)
+app.add_exception_handler(Exception, general_exception_handler)
 
 
 # openapi中每个HTTP方法都被称为操作
@@ -72,6 +83,7 @@ app.add_middleware(
     allow_headers=settings.cors_allow_headers_list,  # 允许的请求头
 )
 
+app.include_router(auth_router)
 app.include_router(test_router)
 app.include_router(api_router)
 

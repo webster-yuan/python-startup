@@ -18,6 +18,9 @@ engine = create_engine(database_url, connect_args=connect_args)
 
 
 def create_db_and_tables():
+    # Ensure all models are imported so SQLModel metadata is complete
+    # (otherwise new tables like AuthSession may not be created).
+    import webster_api.models  # noqa: F401
     SQLModel.metadata.create_all(engine)
 
 
