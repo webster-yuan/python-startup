@@ -3,15 +3,24 @@ from sqlalchemy import create_engine
 from typing import Annotated
 from sqlmodel import SQLModel, Session
 
-sqlite_file_name = "db/database.db"
-sqlite_url = f"sqlite:///{sqlite_file_name}"
+from webster_api.config import settings
 
-connect_args = {"check_same_thread": False}  # 允许 FastAPI 在不同线程中使用同一个 SQLite 数据库
+# 从配置读取数据库 URL
+database_url = settings.database_url
+
+# 如果是 SQLite，使用配置的连接参数
+connect_args = {}
+if database_url.startswith("sqlite"):
+    connect_args = {"check_same_thread": settings.sqlite_check_same_thread}
+
 # create_engine 创建所有表模型的表
-engine = create_engine(sqlite_url, connect_args=connect_args)
+engine = create_engine(database_url, connect_args=connect_args)
 
 
 def create_db_and_tables():
+    # Ensure all models are imported so SQLModel metadata is complete
+    # (otherwise new tables like AuthSession may not be created).
+    import webster_api.models  # noqa: F401
     SQLModel.metadata.create_all(engine)
 
 

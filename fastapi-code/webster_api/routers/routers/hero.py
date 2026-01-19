@@ -1,12 +1,18 @@
-from fastapi import APIRouter, Query
+from fastapi import APIRouter, Query, Depends
 from typing import Annotated
 
 from webster_api.db.sqlite import SessionDep
+from webster_api.core.deps import get_current_active_user
 from webster_api.schemas.hero import HeroCreate, HeroRead
 from webster_api.services.hero import delete_hero_service, create_hero_service, select_heros, select_heros_service, \
     select_hero_by_id_service
 
-hero_router = APIRouter(prefix="/hero", tags=["hero"])
+hero_router = APIRouter(
+    prefix="/hero",
+    tags=["hero"],
+    # All hero endpoints require authentication
+    dependencies=[Depends(get_current_active_user)],
+)
 
 
 @hero_router.post("/hero")
