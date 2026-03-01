@@ -53,18 +53,33 @@ class ReminderService:
             if task["is_completed"]:
                 continue
 
-            remind_time = datetime.strptime(task["remind_time"], TIME_FORMAT)
+            original_time = datetime.strptime(task["remind_time"], TIME_FORMAT)
 
-            # ⏰ 关键修改：提前1小时
-            remind_time = remind_time - timedelta(hours=1)
+            # 提前1小时触发提醒
+            trigger_time = original_time - timedelta(hours=1)
 
-            if remind_time <= now:
+            if trigger_time <= now:
                 if task["last_remind_date"] != today_str:
-                    self.play_sound()  # 🔊 统一声音
+
+                    # 计算剩余时间
+                    remaining = original_time - now
+
+                    if remaining.total_seconds() > 0:
+                        hours = remaining.seconds // 3600
+                        minutes = (remaining.seconds % 3600) // 60
+
+                        if hours > 0:
+                            time_text = f"{hours}小时{minutes}分钟后开始"
+                        else:
+                            time_text = f"{minutes}分钟后开始"
+                    else:
+                        time_text = "已经开始"
+
+                    self.play_sound()
 
                     messagebox.showinfo(
                         "提醒",
-                        f"{task['title']}\n将在1小时后开始"
+                        f"{task['title']}\n{time_text}"
                     )
 
                     task["last_remind_date"] = today_str
