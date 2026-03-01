@@ -1,16 +1,23 @@
 [
     {
-        "title": "跑步锻炼",
-        "deadline": "2026-03-01 19:00",
-        "remind_before_minutes": 60,
+        "title": "跑步健身",
+        "remind_time": "2026-03-01 19:30",
         "is_completed": false,
-        "last_remind_date": "2026-03-01"
+        "last_remind_date": "",
+        "today_reminded": true
     },
     {
-        "title": "洗澡",
-        "deadline": "2026-03-05 21:00",
-        "remind_before_minutes": 60,
+        "title": "洗澡睡觉",
+        "remind_time": "2026-03-01 22:30",
         "is_completed": false,
-        "last_remind_date": ""
+        "last_remind_date": "",
+        "today_reminded": true
+    },
+    {
+        "title": "休息一下",
+        "remind_time": "2026-03-01 18:00",
+        "is_completed": false,
+        "last_remind_date": "2026-03-01",
+        "today_reminded": true
     }
 ]
