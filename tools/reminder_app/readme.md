@@ -1,0 +1,1 @@
+pyinstaller --onefile --windowed --add-data "alert.mp3;." main.py
