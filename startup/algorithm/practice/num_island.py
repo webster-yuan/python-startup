@@ -15,7 +15,7 @@ def numIslands(grid: List[List[str]]) -> int:
             return
         
         grid[row][col] = '0' # 标记为访问过
-        
+
         dfs(row-1, col)
         dfs(row,col-1)
         dfs(row+1, col)
@@ -26,7 +26,6 @@ def numIslands(grid: List[List[str]]) -> int:
             if grid[i][j]=='1':
                 dfs(i,j)
                 count +=1
-                dfs(i, j)
 
     return count
 
