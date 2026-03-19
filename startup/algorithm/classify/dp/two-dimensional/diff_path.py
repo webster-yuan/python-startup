@@ -67,3 +67,19 @@ def unique_paths_dp(m, n):
 
 
 print(unique_paths_dp(3, 7))
+
+# 二维数组优化为一维数组
+# 依赖于下一行，那从下往上遍历时原位置就是依赖值
+# 依赖于下一列，那从右往左记录就由这个一维数组记录
+def unique_paths_dp_one(m, n):
+    # 覆盖最后一行,最后一列数值都为1的情况
+
+    dp = [1 for _ in range(n) ]
+
+    for _ in range(m-2, -1, -1):
+        for j in range(n-2, -1, -1):
+            dp[j] = dp[j] +dp[j+1]
+
+    return dp[0]
+
+print(unique_paths_dp_one(3, 7))
